@@ -1337,15 +1337,15 @@
         function createMonthCard(month, eventList) {
             const eventCount = eventList.length;
             let html = `
-                <div class="month-card">
-                    <div class="month-title" onclick="toggleMonth(this)">
+                <div class="month-card expanded">
+                    <div class="month-title">
                         <h3>
                             ${month}
                             <span class="event-count">${eventCount} event${eventCount !== 1 ? 's' : ''}</span>
                         </h3>
-                        <i class="fas fa-chevron-down"></i>
+                        <i class="fas fa-chevron-up"></i>
                     </div>
-                    <ul class="event-list">
+                    <ul class="event-list" style="display: block;">
             `;
             
             eventList.forEach(event => {
@@ -1402,25 +1402,24 @@
             const monthCard = element.parentElement;
             const eventList = element.nextElementSibling;
             const icon = element.querySelector("i");
-            const isExpanded = monthCard.classList.contains("expanded");
             
-            // Close all other expanded cards
-            document.querySelectorAll(".month-card.expanded").forEach(card => {
-                if (card !== monthCard) {
-                    card.classList.remove("expanded");
-                    card.querySelector(".event-list").style.display = "none";
-                    card.querySelector(".month-title i").className = "fas fa-chevron-down";
-                }
-            });
-            
-            if (isExpanded) {
+            if (monthCard.classList.contains("expanded")) {
                 monthCard.classList.remove("expanded");
                 eventList.style.display = "none";
                 icon.className = "fas fa-chevron-down";
             } else {
+                // Close all other expanded cards first
+                document.querySelectorAll(".month-card.expanded").forEach(card => {
+                    if (card !== monthCard) {
+                        card.classList.remove("expanded");
+                        card.querySelector(".event-list").style.display = "none";
+                        card.querySelector(".month-title i").className = "fas fa-chevron-down";
+                    }
+                });
+                
                 monthCard.classList.add("expanded");
                 eventList.style.display = "block";
-                icon.className = "fas fa-chevron-down";
+                icon.className = "fas fa-chevron-up";
             }
         }
 
