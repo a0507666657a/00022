@@ -1221,9 +1221,9 @@
             </div>
         </div>
         
-        <!-- Add calendar integration button and popup -->
+        <!-- Add calendar integration -->
         <div class="calendar-integration">
-            <button class="calendar-button" id="calendarButton">
+            <button class="calendar-button" id="calendarButton" title="Add to Calendar">
                 <i class="fas fa-calendar-plus"></i>
             </button>
             <div class="calendar-popup" id="calendarPopup">
@@ -1522,7 +1522,7 @@
                                 <a href="${link}" target="_blank" class="event-link">
                                     Join Session <i class="fas fa-external-link-alt"></i>
                                 </a>
-                                <button onclick="showCalendarOptions('${event.replace(/'/g, "\\'")}', '${month}')" class="event-link" style="background: none; border: none; cursor: pointer;">
+                                <button onclick="showCalendarOptions('${event.replace(/'/g, "\\'")}', '${month}')" class="add-to-calendar-btn">
                                     <i class="fas fa-calendar-plus"></i> Add to Calendar
                                 </button>
                             </div>
@@ -2165,7 +2165,8 @@ How may I assist you with your educational planning today?`;
                 popup.classList.add('active');
             }
 
-            document.addEventListener('DOMContentLoaded', () => {
+            // Initialize calendar integration
+            document.addEventListener('DOMContentLoaded', function() {
                 const calendarButton = document.getElementById('calendarButton');
                 const calendarPopup = document.getElementById('calendarPopup');
                 const calendarClose = document.getElementById('calendarClose');
@@ -2180,6 +2181,13 @@ How may I assist you with your educational planning today?`;
 
                 calendarClose.addEventListener('click', () => {
                     calendarPopup.classList.remove('active');
+                });
+
+                // Close popup when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!calendarPopup.contains(e.target) && e.target !== calendarButton) {
+                        calendarPopup.classList.remove('active');
+                    }
                 });
 
                 googleCalendar.addEventListener('click', (e) => {
@@ -2212,7 +2220,7 @@ How may I assist you with your educational planning today?`;
             });
         });
 
-        // Add calendar integration functionality
+        // Calendar Integration Functions
         function generateICSContent(event, month) {
             const [monthName, year] = month.split(' ');
             let day = 1;
