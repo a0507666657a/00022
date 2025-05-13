@@ -2163,6 +2163,8 @@ How may I assist you with your educational planning today?`;
                 currentMonth = month;
                 const popup = document.getElementById('calendarPopup');
                 popup.classList.add('active');
+                // Prevent event from bubbling up
+                event.stopPropagation();
             }
 
             // Initialize calendar integration
@@ -2175,7 +2177,8 @@ How may I assist you with your educational planning today?`;
                 const icalDownload = document.getElementById('icalDownload');
                 const downloadIcsBtn = document.getElementById('downloadIcs');
 
-                calendarButton.addEventListener('click', () => {
+                calendarButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     calendarPopup.classList.toggle('active');
                 });
 
