@@ -1028,6 +1028,112 @@
         .ai-chat-messages {
             scroll-behavior: smooth;
         }
+
+        /* Add new styles for calendar integration */
+        .calendar-integration {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 1000;
+        }
+
+        .calendar-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-button:hover {
+            transform: scale(1.1);
+        }
+
+        .calendar-popup {
+            position: fixed;
+            bottom: 5rem;
+            left: 2rem;
+            width: 300px;
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            padding: 1.5rem;
+            display: none;
+            z-index: 1000;
+        }
+
+        .calendar-popup.active {
+            display: block;
+        }
+
+        .calendar-popup h3 {
+            margin: 0 0 1rem 0;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calendar-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .calendar-option {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .calendar-option:hover {
+            background-color: var(--light-bg);
+            transform: translateY(-2px);
+        }
+
+        .calendar-option i {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+        }
+
+        .calendar-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-integration {
+                bottom: 1rem;
+                left: 1rem;
+            }
+            
+            .calendar-popup {
+                width: calc(100% - 2rem);
+                left: 1rem;
+                bottom: 5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1111,6 +1217,37 @@
                     <button id="aiChatSend">
                         <i class="fas fa-paper-plane"></i>
                     </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add calendar integration button and popup -->
+        <div class="calendar-integration">
+            <button class="calendar-button" id="calendarButton">
+                <i class="fas fa-calendar-plus"></i>
+            </button>
+            <div class="calendar-popup" id="calendarPopup">
+                <button class="calendar-close" id="calendarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h3><i class="fas fa-calendar-alt"></i> Add to Calendar</h3>
+                <div class="calendar-options">
+                    <a href="#" class="calendar-option" id="googleCalendar">
+                        <i class="fab fa-google"></i>
+                        <span>Add to Google Calendar</span>
+                    </a>
+                    <a href="#" class="calendar-option" id="outlookCalendar">
+                        <i class="fab fa-microsoft"></i>
+                        <span>Add to Outlook</span>
+                    </a>
+                    <a href="#" class="calendar-option" id="icalDownload">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Add to iPhone/iPad Calendar</span>
+                    </a>
+                    <a href="#" class="calendar-option" id="downloadIcs">
+                        <i class="fas fa-download"></i>
+                        <span>Download .ics file</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -1381,9 +1518,14 @@
                                     ${badgeText}
                                 </span>
                             </div>
-                            <a href="${link}" target="_blank" class="event-link">
-                                Join Session <i class="fas fa-external-link-alt"></i>
-                            </a>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                <a href="${link}" target="_blank" class="event-link">
+                                    Join Session <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                <button onclick="showCalendarOptions('${event.replace(/'/g, "\\'")}', '${month}')" class="event-link" style="background: none; border: none; cursor: pointer;">
+                                    <i class="fas fa-calendar-plus"></i> Add to Calendar
+                                </button>
+                            </div>
                         </div>
                     </li>
                 `;
@@ -2011,7 +2153,187 @@ How may I assist you with your educational planning today?`;
                     sendMessage(message);
                 }
             });
+
+            // Add calendar popup functionality
+            let currentEvent = null;
+            let currentMonth = null;
+
+            function showCalendarOptions(event, month) {
+                currentEvent = event;
+                currentMonth = month;
+                const popup = document.getElementById('calendarPopup');
+                popup.classList.add('active');
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const calendarButton = document.getElementById('calendarButton');
+                const calendarPopup = document.getElementById('calendarPopup');
+                const calendarClose = document.getElementById('calendarClose');
+                const googleCalendar = document.getElementById('googleCalendar');
+                const outlookCalendar = document.getElementById('outlookCalendar');
+                const icalDownload = document.getElementById('icalDownload');
+                const downloadIcsBtn = document.getElementById('downloadIcs');
+
+                calendarButton.addEventListener('click', () => {
+                    calendarPopup.classList.toggle('active');
+                });
+
+                calendarClose.addEventListener('click', () => {
+                    calendarPopup.classList.remove('active');
+                });
+
+                googleCalendar.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentEvent && currentMonth) {
+                        addToGoogleCalendar(currentEvent, currentMonth);
+                    }
+                });
+
+                outlookCalendar.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentEvent && currentMonth) {
+                        addToOutlookCalendar(currentEvent, currentMonth);
+                    }
+                });
+
+                icalDownload.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentEvent && currentMonth) {
+                        downloadICS(currentEvent, currentMonth);
+                    }
+                });
+
+                downloadIcsBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentEvent && currentMonth) {
+                        downloadICS(currentEvent, currentMonth);
+                    }
+                });
+            });
         });
+
+        // Add calendar integration functionality
+        function generateICSContent(event, month) {
+            const [monthName, year] = month.split(' ');
+            let day = 1;
+            let title = event;
+            
+            if (event.includes(' - ')) {
+                const parts = event.split(' - ');
+                day = parseInt(parts[0]);
+                title = parts[1];
+            } else if (event.includes(':')) {
+                const parts = event.split(':');
+                day = parseInt(parts[0]);
+                title = parts[1].trim();
+            }
+
+            const date = new Date(`${monthName} ${day}, ${year}`);
+            const endDate = new Date(date);
+            endDate.setHours(date.getHours() + 1);
+
+            const formatDate = (date) => {
+                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            };
+
+            const isJournalClub = event.includes('Journal Club');
+            const location = isJournalClub ? 'Microsoft Teams - Nursing Journal Club' : 'Microsoft Teams - Educational In-Service';
+            const link = isJournalClub ? journalClubLink : educationLink;
+
+            return `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+UID:${Date.now()}@nursingeducation.com
+DTSTAMP:${formatDate(new Date())}
+DTSTART:${formatDate(date)}
+DTEND:${formatDate(endDate)}
+SUMMARY:${title}
+DESCRIPTION:Join the session on Microsoft Teams: ${link}
+LOCATION:${location}
+END:VEVENT
+END:VCALENDAR`;
+        }
+
+        function downloadICS(event, month) {
+            const icsContent = generateICSContent(event, month);
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'nursing_education_event.ics';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function addToGoogleCalendar(event, month) {
+            const [monthName, year] = month.split(' ');
+            let day = 1;
+            let title = event;
+            
+            if (event.includes(' - ')) {
+                const parts = event.split(' - ');
+                day = parseInt(parts[0]);
+                title = parts[1];
+            } else if (event.includes(':')) {
+                const parts = event.split(':');
+                day = parseInt(parts[0]);
+                title = parts[1].trim();
+            }
+
+            const date = new Date(`${monthName} ${day}, ${year}`);
+            const endDate = new Date(date);
+            endDate.setHours(date.getHours() + 1);
+
+            const isJournalClub = event.includes('Journal Club');
+            const location = isJournalClub ? 'Microsoft Teams - Nursing Journal Club' : 'Microsoft Teams - Educational In-Service';
+            const link = isJournalClub ? journalClubLink : educationLink;
+
+            const params = new URLSearchParams({
+                action: 'TEMPLATE',
+                text: title,
+                dates: `${date.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+                details: `Join the session on Microsoft Teams: ${link}`,
+                location: location
+            });
+
+            window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank');
+        }
+
+        function addToOutlookCalendar(event, month) {
+            const [monthName, year] = month.split(' ');
+            let day = 1;
+            let title = event;
+            
+            if (event.includes(' - ')) {
+                const parts = event.split(' - ');
+                day = parseInt(parts[0]);
+                title = parts[1];
+            } else if (event.includes(':')) {
+                const parts = event.split(':');
+                day = parseInt(parts[0]);
+                title = parts[1].trim();
+            }
+
+            const date = new Date(`${monthName} ${day}, ${year}`);
+            const endDate = new Date(date);
+            endDate.setHours(date.getHours() + 1);
+
+            const isJournalClub = event.includes('Journal Club');
+            const location = isJournalClub ? 'Microsoft Teams - Nursing Journal Club' : 'Microsoft Teams - Educational In-Service';
+            const link = isJournalClub ? journalClubLink : educationLink;
+
+            const params = new URLSearchParams({
+                path: '/calendar/action/compose',
+                rru: 'addevent',
+                subject: title,
+                startdt: date.toISOString(),
+                enddt: endDate.toISOString(),
+                body: `Join the session on Microsoft Teams: ${link}`,
+                location: location
+            });
+
+            window.open(`https://outlook.office.com/calendar/0/deeplink/compose?${params.toString()}`, '_blank');
+        }
     </script>
 </body>
 </html>
