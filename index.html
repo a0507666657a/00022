@@ -3,46 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nursing Education Calendar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Interactive calendar of nursing educational activities for 2025">
+    <title>Calendar of Educational Activities 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #0ea5e9;
+            --accent-color: #0284c7;
+            --light-bg: #f0f9ff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+        
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
         }
 
         body {
-            background-color: #f5f5f5;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        h1 {
+        header {
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
         }
 
         .month-section {
-            margin-bottom: 40px;
+            margin-bottom: 2rem;
         }
 
         .month-header {
-            background-color: #3498db;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
@@ -54,28 +83,29 @@
         }
 
         .event {
-            background-color: #f8f9fa;
-            border-left: 4px solid #3498db;
-            margin: 10px 0;
-            padding: 15px;
+            background-color: var(--light-bg);
+            border-left: 4px solid var(--primary-color);
+            margin: 1rem 0;
+            padding: 1rem;
             border-radius: 4px;
         }
 
         .event h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
         }
 
         .event p {
-            color: #666;
-            margin: 5px 0;
+            color: var(--text-light);
+            margin: 0.25rem 0;
         }
 
         .teams-link {
-            color: #0078d4;
+            color: var(--primary-color);
             text-decoration: none;
             display: inline-block;
-            margin-top: 10px;
+            margin-top: 0.5rem;
+            font-weight: 500;
         }
 
         .teams-link:hover {
@@ -91,112 +121,151 @@
         }
 
         .chat-button {
-            background-color: #3498db;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--white);
             border: none;
             padding: 15px;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .chat-button i {
+            font-size: 24px;
         }
 
         .chat-popup {
             display: none;
             position: fixed;
-            bottom: 80px;
+            bottom: 90px;
             right: 20px;
-            width: 300px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .chat-popup.show {
             display: block;
-            animation: fadeIn 0.3s ease-in-out;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .chat-header {
-            background-color: #3498db;
-            color: white;
-            padding: 15px;
-            font-weight: bold;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header i {
+            cursor: pointer;
+            font-size: 1.2rem;
         }
 
         .chat-messages {
-            height: 300px;
+            height: 350px;
             overflow-y: auto;
-            padding: 15px;
+            padding: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            max-width: 85%;
+        }
+
+        .user-message {
+            margin-left: auto;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 0.75rem 1rem;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .assistant-message {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            padding: 0.75rem 1rem;
+            border-radius: 15px 15px 15px 0;
         }
 
         .chat-input {
             display: flex;
-            padding: 15px;
-            border-top: 1px solid #e9ecef;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            background-color: var(--white);
         }
 
         .chat-input input {
             flex: 1;
-            padding: 8px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            margin-right: 10px;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-right: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
 
         .chat-input button {
-            background-color: #3498db;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--white);
             border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
         }
 
-        .message {
-            margin-bottom: 10px;
-            padding: 8px 12px;
-            border-radius: 15px;
-            max-width: 80%;
-        }
-
-        .user-message {
-            background-color: #3498db;
-            color: white;
-            margin-left: auto;
-        }
-
-        .assistant-message {
-            background-color: #f8f9fa;
-            color: #2c3e50;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .chat-input button:hover {
+            background-color: var(--primary-dark);
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 10px;
-            }
-
-            .event {
-                padding: 10px;
+                margin: 1rem;
+                padding: 1rem;
             }
 
             .chat-popup {
                 width: 90%;
-                left: 5%;
                 right: 5%;
+                left: 5%;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Nursing Education Calendar</h1>
-        
+        <header>
+            <h1>Calendar of Educational Activities 2025</h1>
+            <p class="subtitle">Discover upcoming nursing education events and journal clubs</p>
+        </header>
+
         <!-- March 2024 -->
         <div class="month-section">
             <div class="month-header">
@@ -208,14 +277,18 @@
                     <p>Date: March 15, 2024</p>
                     <p>Time: 2:00 PM - 3:30 PM</p>
                     <p>Location: Virtual Meeting</p>
-                    <a href="https://teams.microsoft.com/l/meetup-join/education-session-march" class="teams-link" target="_blank">Join Microsoft Teams Meeting</a>
+                    <a href="https://teams.microsoft.com/l/meetup-join/education-session-march" class="teams-link" target="_blank">
+                        <i class="fas fa-video"></i> Join Microsoft Teams Meeting
+                    </a>
                 </div>
                 <div class="event">
                     <h3>Journal Club: Latest Advances in Patient Care</h3>
                     <p>Date: March 28, 2024</p>
                     <p>Time: 1:00 PM - 2:00 PM</p>
                     <p>Location: Virtual Meeting</p>
-                    <a href="https://teams.microsoft.com/l/meetup-join/journal-club-march" class="teams-link" target="_blank">Join Microsoft Teams Meeting</a>
+                    <a href="https://teams.microsoft.com/l/meetup-join/journal-club-march" class="teams-link" target="_blank">
+                        <i class="fas fa-video"></i> Join Microsoft Teams Meeting
+                    </a>
                 </div>
             </div>
         </div>
@@ -231,14 +304,18 @@
                     <p>Date: April 12, 2024</p>
                     <p>Time: 2:00 PM - 3:30 PM</p>
                     <p>Location: Virtual Meeting</p>
-                    <a href="https://teams.microsoft.com/l/meetup-join/education-session-april" class="teams-link" target="_blank">Join Microsoft Teams Meeting</a>
+                    <a href="https://teams.microsoft.com/l/meetup-join/education-session-april" class="teams-link" target="_blank">
+                        <i class="fas fa-video"></i> Join Microsoft Teams Meeting
+                    </a>
                 </div>
                 <div class="event">
                     <h3>Journal Club: Evidence-Based Practice in Nursing</h3>
                     <p>Date: April 25, 2024</p>
                     <p>Time: 1:00 PM - 2:00 PM</p>
                     <p>Location: Virtual Meeting</p>
-                    <a href="https://teams.microsoft.com/l/meetup-join/journal-club-april" class="teams-link" target="_blank">Join Microsoft Teams Meeting</a>
+                    <a href="https://teams.microsoft.com/l/meetup-join/journal-club-april" class="teams-link" target="_blank">
+                        <i class="fas fa-video"></i> Join Microsoft Teams Meeting
+                    </a>
                 </div>
             </div>
         </div>
@@ -246,17 +323,29 @@
 
     <!-- AI Assistant -->
     <div class="ai-assistant">
-        <button class="chat-button" title="Chat with AI Assistant">💬</button>
+        <button class="chat-button" title="Chat with AI Assistant">
+            <i class="fas fa-robot"></i>
+        </button>
         <div class="chat-popup">
-            <div class="chat-header">AI Assistant</div>
+            <div class="chat-header">
+                AI Assistant
+                <i class="fas fa-times" id="closeChat"></i>
+            </div>
             <div class="chat-messages">
                 <div class="message assistant-message">
-                    Hello! I'm your AI assistant. How can I help you with the nursing education calendar?
+                    Hello! 👋 I'm your AI assistant for the nursing education calendar. I can help you with:
+                    • Finding specific events
+                    • Information about sessions
+                    • Teams meeting links
+                    • Schedule details
+                    What would you like to know?
                 </div>
             </div>
             <div class="chat-input">
-                <input type="text" placeholder="Type your message...">
-                <button>Send</button>
+                <input type="text" placeholder="Type your message..." aria-label="Chat input">
+                <button>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -268,13 +357,22 @@
         const chatMessages = document.querySelector('.chat-messages');
         const chatInput = document.querySelector('.chat-input input');
         const chatSendButton = document.querySelector('.chat-input button');
+        const closeChat = document.getElementById('closeChat');
 
         chatButton.addEventListener('click', () => {
             chatPopup.classList.toggle('show');
+            if (chatPopup.classList.contains('show')) {
+                chatInput.focus();
+            }
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatPopup.classList.remove('show');
         });
 
         document.addEventListener('click', (e) => {
-            if (!chatButton.contains(e.target) && !chatPopup.contains(e.target)) {
+            if (!chatButton.contains(e.target) && 
+                !chatPopup.contains(e.target)) {
                 chatPopup.classList.remove('show');
             }
         });
@@ -291,14 +389,39 @@
         function handleUserMessage(message) {
             addMessage(message, true);
             
-            // Simple response logic
-            let response = "I'll help you with that. ";
-            if (message.toLowerCase().includes('teams')) {
-                response += "You can join the Teams meetings by clicking the 'Join Microsoft Teams Meeting' link in each event.";
-            } else if (message.toLowerCase().includes('event')) {
-                response += "Events are organized by month. You can see all upcoming education sessions and journal clubs.";
-            } else {
-                response += "Please let me know if you have any questions about the calendar or Teams meetings.";
+            // Enhanced response logic
+            let response = '';
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+                response = "Hello! How can I assist you with the nursing education calendar today?";
+            }
+            else if (lowerMessage.includes('teams') || lowerMessage.includes('meeting') || lowerMessage.includes('join')) {
+                response = "You can join any session by clicking the 'Join Microsoft Teams Meeting' link under the specific event. The link will open directly in Microsoft Teams. Make sure you're logged into your account before joining.";
+            }
+            else if (lowerMessage.includes('march')) {
+                response = "In March 2024, we have two events:\n1. Nursing Documentation Best Practices (March 15)\n2. Journal Club on Latest Advances in Patient Care (March 28)";
+            }
+            else if (lowerMessage.includes('april')) {
+                response = "In April 2024, we have two events:\n1. Emergency Response Protocol Updates (April 12)\n2. Journal Club on Evidence-Based Practice in Nursing (April 25)";
+            }
+            else if (lowerMessage.includes('journal club')) {
+                response = "Journal Club sessions are held monthly. They're great opportunities to discuss recent research and best practices in nursing. The upcoming sessions are on March 28 and April 25.";
+            }
+            else if (lowerMessage.includes('education') || lowerMessage.includes('session')) {
+                response = "Education sessions cover various nursing topics. Upcoming sessions include:\n• Nursing Documentation Best Practices (March 15)\n• Emergency Response Protocol Updates (April 12)";
+            }
+            else if (lowerMessage.includes('time') || lowerMessage.includes('schedule')) {
+                response = "Education sessions are typically held from 2:00 PM to 3:30 PM.\nJournal Club sessions are from 1:00 PM to 2:00 PM.\nAll sessions are conducted virtually through Microsoft Teams.";
+            }
+            else if (lowerMessage.includes('location') || lowerMessage.includes('where')) {
+                response = "All sessions are conducted virtually through Microsoft Teams. You can join from anywhere using the Teams meeting link provided for each event.";
+            }
+            else if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
+                response = "I can help you with:\n• Finding specific events and their details\n• Information about session times and locations\n• How to join Teams meetings\n• Schedule information\n• Details about Journal Club and Education sessions";
+            }
+            else {
+                response = "I understand you're asking about " + message + ". Could you please be more specific? I can help you find events, provide session details, or explain how to join the Teams meetings.";
             }
             
             setTimeout(() => addMessage(response), 500);
